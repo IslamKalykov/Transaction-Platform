@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     "account",
     "user",
     'rest_framework',
+
+    "account",
+    "trasaction",
+    "user"
 ]
 
 MIDDLEWARE = [

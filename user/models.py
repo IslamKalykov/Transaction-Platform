@@ -8,6 +8,7 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=256)
     is_active = models.BooleanField(default=True)
     is_blocked = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
