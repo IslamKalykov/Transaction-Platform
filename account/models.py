@@ -4,8 +4,8 @@ from django.utils.translation import gettext_lazy as _
 
 class Account(models.Model):
     user = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='account')
-    balance = models.DecimalField(max_digits=12, decimal_places=2)
-    min_balance = models.DecimalField(max_digits=12, decimal_places=2)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=100)
+    min_balance = models.DecimalField(max_digits=12, decimal_places=2, default=100)
     is_active = models.BooleanField(default=True)
     is_blocked = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
