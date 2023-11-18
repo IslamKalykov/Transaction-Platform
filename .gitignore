@@ -132,3 +132,4 @@ dmypy.json
 .idea
 .github
 .todo
+requirements.txt
