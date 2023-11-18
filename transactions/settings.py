@@ -43,11 +43,7 @@ INSTALLED_APPS = [
     "trasaction",
     "account",
     "user",
-    'rest_framework',
-
-    "account",
-    "trasaction",
-    "user"
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
