@@ -1,37 +1,40 @@
-from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView
 from .models import Transaction
-from .serializers import TransactionSerializer, AccountSerializer
-from account.models import Account
-from rest_framework import serializers
+from .serializers import TransactionSerializer
+from rest_framework.response import Response
+from rest_framework import status
+
+
 # Create your views here.
 
 
-class AccountTransactionView(ListCreateAPIView):
+class TransactionListView(ListCreateAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
     def perform_create(self, serializer):
-        from_account_id = self.request.data.get('from_account')
-        to_account_id = self.request.data.get('to_account')
+        # Получаем данные из запроса
+        amount = serializer.validated_data.get('amount')
+        from_account = serializer.validated_data.get('from_account')
+        to_account = serializer.validated_data.get('to_account')
 
-        from_account = Account.objects.get(id=from_account_id)
-        to_account = Account.objects.get(id=to_account_id)
+        # Проверяем, достаточно ли средств на счете отправителя
+        if from_account.balance < amount:
+            # Если недостаточно средств, устанавливаем статус транзакции в "Неуспешно"
+            serializer.save(status="Неуспешно")
+            return Response({'error': 'Недостаточно средств на счете отправителя'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        amount = serializer.validated_data['amount']
-
-        if from_account.balance - amount < from_account.min_balance:
-            raise serializers.ValidationError("Insufficient funds.")
-
+        # Проводим транзакцию (уменьшаем баланс отправителя и увеличиваем баланс получателя)
         from_account.balance -= amount
-        from_account.save()
-
         to_account.balance += amount
+        from_account.save()
         to_account.save()
 
-        serializer.save()
+        # Устанавливаем статус транзакции в "Успешно"
+        serializer.save(status="Успешно")
 
+        # Можно добавить дополнительные поля или логику, если нужно
 
-class AccountDetailView(RetrieveAPIView):
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
+        # Возвращаем успешный ответ
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
