@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Transaction
+from account.models import Account
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -37,3 +38,8 @@ class TransactionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Недостаточно средств на счете для проведения транзакции.")
 
         return data
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = '__all__'
