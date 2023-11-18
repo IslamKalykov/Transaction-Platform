@@ -1,8 +1,9 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from .models import Transaction
-from .serializers import TransactionSerializer
+from .serializers import TransactionSerializer, AccountSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from account.models import Account
 
 
 # Create your views here.
@@ -38,3 +39,8 @@ class TransactionListView(ListCreateAPIView):
 
         # Возвращаем успешный ответ
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class AccountDetailView(RetrieveAPIView):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
